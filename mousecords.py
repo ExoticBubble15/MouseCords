@@ -4,29 +4,37 @@ import keyboard
     
 def getPos(preface = ""):
     x, y = mouse.position()
-    return preface + "(" + str(x) + ", " + str(y) + ")"
+    return (f'{preface}({x}, {y})')
 
 def updateText():
-    if keyboard.is_pressed('space'):
+    if keyboard.is_pressed('enter'):
         if(savedCords[len(savedCords)-1] != getPos()):
             savedCords.append(getPos())
+
     cursorCordsdisplay.config(text=getPos("Current position: "))
     savedCordsdisplay.config(text=savedCordsString())
     window.after(1, updateText)
 
 savedCords = [getPos()]
 def savedCordsString(includeEnd = False):
-    returnString = "Start: " + savedCords[0]
-    for i in range(1, len(savedCords)):
-        returnString += "\nSave " + str(i) + ": " + savedCords[i]
+    returnString = (f'Start: {savedCords[0]}')
+
+    if len(savedCords) <= displayCount or includeEnd: 
+        startPos = 1
+    else:
+        startPos = len(savedCords)-displayCount
+    for i in range(startPos, len(savedCords)):
+        returnString += (f'\nSave {i}: {savedCords[i]}')
+
     if includeEnd:
-        returnString += "\nEnd: " + getPos()
+        returnString += (f'\nEnd: {getPos()}')
     return returnString
 
 def close():
     print(savedCordsString(True))
     window.destroy()
 
+displayCount = 20
 window = Tk()
 
 cursorCordsdisplay = Label(window, font=("Calibri", "18"), fg="black")

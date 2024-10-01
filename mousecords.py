@@ -6,15 +6,23 @@ def getPos(preface = ""):
     x, y = mouse.position()
     return (f'{preface}({x}, {y})')
 
+def getColor(preface = ""):
+    x, y = mouse.position()
+    return (f'{preface}{mouse.pixel(x, y)}')
+
 def updateText():
     if keyboard.is_pressed('enter'):
-        if(savedCords[len(savedCords)-1] != getPos()):
-            savedCords.append(getPos())
-    cursorCordsdisplay.config(text=getPos("Current position: "))
+        if(getPos() not in savedCords[len(savedCords)-1]):
+            savedCords.append(getPos("Pos "))
+    if keyboard.is_pressed('shift'):
+        if(getColor() not in savedCords[len(savedCords)-1]) or (getPos() not in savedCords[len(savedCords)-1]):
+            savedCords.append(f'{getPos("Pos ")} | {getColor("RGB ")}')
+    cursorCordsDisplay.config(text=getPos("Current position: "))
+    cursorRGBdisplay.config(text=getColor("Current RGB: "))
     savedCordsdisplay.config(text=savedCordsString())
     window.after(1, updateText)
 
-savedCords = [getPos()]
+savedCords = [f'{getPos("Pos ")} | {getColor("RGB ")}']
 def savedCordsString(includeEnd = False):
     returnString = (f'Start: {savedCords[0]}')
     if len(savedCords) <= displayCount or includeEnd: 
@@ -24,7 +32,7 @@ def savedCordsString(includeEnd = False):
     for i in range(startPos, len(savedCords)):
         returnString += (f'\nSave {i}: {savedCords[i]}')
     if includeEnd:
-        returnString += (f'\nEnd: {getPos()}')
+        returnString += (f'\nEnd: {getPos("Pos ")} | {getColor("RGB ")}')
     return returnString
 
 def close():
@@ -34,8 +42,11 @@ def close():
 displayCount = 20
 window = Tk()
 
-cursorCordsdisplay = Label(window, font=("Calibri", "18"), fg="black")
-cursorCordsdisplay.pack()
+cursorCordsDisplay = Label(window, font=("Calibri", "18"), fg="black")
+cursorCordsDisplay.pack()
+
+cursorRGBdisplay = Label(window, font=("Calibri", "18"), fg="black")
+cursorRGBdisplay.pack()
 
 savedCordsdisplay = Label(window, font=("Calibri", "13"), fg="blue")
 savedCordsdisplay.pack()
